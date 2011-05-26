@@ -9,6 +9,7 @@ hub_port    = 8888
 
 bot = RDCbot.new
 bot.nickname = 'morrBot'
+bot.description = 'http://shikimori.org'
 bot.host = hub_address
 bot.port = hub_port
 bot.email = 'takandar@gmail.com'

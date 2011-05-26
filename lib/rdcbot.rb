@@ -8,11 +8,14 @@ class RDCbot
   attr_accessor :hub_name
 
   attr_accessor :nickname
+  attr_accessor :description
   attr_accessor :host
   attr_accessor :port
   attr_accessor :email
 
   attr_accessor :callbacks
+
+  attr_accessor :reconnect_timeout
 
   # constructor
   def initialize
@@ -22,6 +25,10 @@ class RDCbot
 
     @logged_in = false
     @listener = nil
+
+    @hub = nil
+
+    @reconnect_timeout = 2
 
     @callbacks = {}
 
@@ -36,13 +43,12 @@ class RDCbot
       return unless !logged_in? && command.data == @nickname
       send(DCVersionCommand.new)
       send(DCGetNickListCommand.new)
-      send(DCMyINFOCommand.new(@nickname, @client, @version, @share_size, @email))
+      send(DCMyINFOCommand.new(@nickname, @description, @client, @version, @share_size, @email))
     })
     add_callback(DCValidateDenideCommand, lambda {|command|
-      # shutdown
-      listener = @listener
-      @listener = nil
-      listener.kill
+      # reconnect in 5 seconds
+      sleep(@reconnect_timeout)
+      connect
     })
     add_callback(DCNickListCommand, lambda {|command|
       # final login step
@@ -58,8 +64,7 @@ class RDCbot
 
   # sepate thread for DCHub listening
   def start
-    @hub = DCHubConnection.new(@host, @port, method(:fire))
-    @hub.connect
+    connect
     @listener = Thread.new do
       while true
         begin
@@ -100,5 +105,15 @@ class RDCbot
   # sends command to hub
   def send(command)
     @hub.send_command(command)
+  end
+
+  private
+  # init DCHubConnection
+  def connect
+    if @hub
+      @hub.disconnect
+    end
+    @hub = DCHubConnection.new(@host, @port, method(:fire))
+    @hub.connect
   end
 end

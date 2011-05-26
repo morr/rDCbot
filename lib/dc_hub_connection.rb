@@ -14,6 +14,10 @@ class DCHubConnection
     @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
   end
 
+  def disconnect
+    @socket.close
+  end
+
   def fetch_command
     text = ""
     receiving = true
