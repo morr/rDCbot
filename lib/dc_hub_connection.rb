@@ -3,9 +3,10 @@ require 'socket'
 class DCHubConnection
   attr_reader :socket
 
-  def initialize(host, port)
+  def initialize(host, port, command_trigger_callback)
     @host = host
     @port = port
+    @command_trigger_callback = command_trigger_callback
   end
 
   def connect
@@ -13,7 +14,7 @@ class DCHubConnection
     @socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
   end
 
-  def get_command
+  def fetch_command
     text = ""
     receiving = true
     while receiving
@@ -29,7 +30,7 @@ class DCHubConnection
     end
     command = DCCommandBuilder.build(text)
     puts "GOT:#{command.to_s}"
-    command
+    @command_trigger_callback.call(command)
   end
 
   def send_command(command)

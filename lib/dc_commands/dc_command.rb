@@ -1,3 +1,5 @@
+require 'iconv'
+
 class DCCommand
   attr_accessor :data
 

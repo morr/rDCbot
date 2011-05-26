@@ -12,19 +12,22 @@ describe DCHubConnection do
       TCPSocket.stub(:new).and_return(socket)
       TCPSocket.should_receive(:new).once
 
-      connection = DCHubConnection.new("123", 123)
+      connection = DCHubConnection.new("123", 123, lambda { })
       connection.connect
     end
 
-    it "receives hub wellcome message" do
+    it "receives message and triggers callback" do
       socket = mock(TCPSocket)
       socket.stub(:recv).and_return(DCLockCommand.new("test").to_s)
       TCPSocket.stub(:new).and_return(socket)
 
-      connection = DCHubConnection.new(nil, nil)
+      callback = lambda {|command| puts command.to_s }
+      callback.should_receive(:call).once
+
+      connection = DCHubConnection.new(nil, nil, callback)
       connection.stub(:socket).and_return(socket)
 
-      connection.get_command.should eq DCLockCommand.new("test")
+      connection.fetch_command
     end
   end
 end

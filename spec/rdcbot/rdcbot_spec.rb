@@ -10,8 +10,17 @@ describe RDCbot do
 
     #let(:connection) { DCConnection.new(nil, nil) }
 
-    it "connects to hub" do
-      RDCbot.new("bot", "111", 111)
+    it "adds callback" do
+      bot = RDCbot.new("bot", "111", 111)
+      callbacks = bot.callbacks.include?(DCLockCommand) ? bot.callbacks[DCLockCommand].size : 0
+      callback = lambda {|command| }
+      bot.add_callback(DCLockCommand, callback)
+      bot.callbacks[DCLockCommand].size.should eq(callbacks+1)
+      bot.callbacks[DCLockCommand].last.should eq(callback)
+    end
+
+    #it "connects to hub" do
+      #RDCbot.new("bot", "111", 111)
       #RDCbot.
       #socket = mock(TCPSocket)
       #socket.stub(:recv).and_return(DCLockCommand.new("test").to_s)
@@ -19,7 +28,7 @@ describe RDCbot do
       #connection.stub(:socket).and_return(socket)
 
       #connection.get_command.should eq DCLockCommand.new("test")
-    end
+    #end
 
 
     #it "returns one for test" do

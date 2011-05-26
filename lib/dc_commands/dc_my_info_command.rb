@@ -4,7 +4,7 @@ class DCMyINFOCommand < DCCommand
   def initialize(*args)
     case args.size
       when 1
-        @data = args[0]
+       @data = Iconv.iconv('utf-8', 'cp1251', args[0])
 
       when 5
         nickname, bot_name, bot_version, share_size, email = args

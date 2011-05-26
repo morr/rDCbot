@@ -8,7 +8,13 @@ hub_address = '10.8.13.88'#'hale.hopto.org'
 hub_port    = 8888
 
 bot = RDCbot.new('morrBot', hub_address, hub_port)
-bot.listen
+bot.start
+
+sleep(1)
+bot.say "test"
+while bot.alive?
+  sleep(3)
+end
 
 #command1 = DCCommand.new("$Lock EXTENDEDPROTOCOLrujR<cmFE3W4SiPTp=0icpS0i;unix Pk=PtokaX")
 #command2 = DCCommand.new("$Lock EXTENDEDPROTOCOLrujR<cmFE3W4SiPTp=0icpS0i;unix Pk=PtokaX")

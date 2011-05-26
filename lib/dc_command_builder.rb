@@ -13,7 +13,7 @@ class DCCommandBuilder
         Object::const_get("DC#{name}Command").new(data)
       end
     rescue NameError => e
-      DCCommand.new(name, data)
+      DCUnknownCommand.new(name, data)
       #raise "unknown command: #{name}"
     end
   end
