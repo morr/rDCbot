@@ -7,7 +7,7 @@ require 'ap'
 hub_address = '10.8.13.88'#'hale.hopto.org'
 hub_port    = 8888
 
-bot = RDCbot.new(hub_address, hub_port)
+bot = RDCbot.new('morrBot', hub_address, hub_port)
 bot.listen
 
 #command1 = DCCommand.new("$Lock EXTENDEDPROTOCOLrujR<cmFE3W4SiPTp=0icpS0i;unix Pk=PtokaX")
