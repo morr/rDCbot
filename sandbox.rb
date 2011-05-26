@@ -7,11 +7,16 @@ require 'ap'
 hub_address = '10.8.13.88'#'hale.hopto.org'
 hub_port    = 8888
 
-bot = RDCbot.new('morrBot', hub_address, hub_port)
+bot = RDCbot.new
+bot.nickname = 'morrBot'
+bot.host = hub_address
+bot.port = hub_port
+bot.email = 'takandar@gmail.com'
+
 bot.start
 
-sleep(1)
-bot.say "test"
+#sleep(1)
+#bot.say "test"
 while bot.alive?
   sleep(3)
 end

@@ -2,42 +2,41 @@ require 'lib/dc_command_builder'
 require 'lib/dc_hub_connection'
 
 class RDCbot
-  attr_accessor :bot_name
-  attr_accessor :bot_version
+  attr_accessor :client
+  attr_accessor :version
   attr_accessor :share_size
   attr_accessor :hub_name
+
+  attr_accessor :nickname
+  attr_accessor :host
+  attr_accessor :port
   attr_accessor :email
 
   attr_accessor :callbacks
 
   # constructor
-  def initialize(nickname, host, port)
-    @nickname = nickname
-    @host = host
-    @port = port
-
-    @bot_name = 'rubyDC++bot'
-    @bot_version = '0.01'
+  def initialize
+    @client = 'rubyDC++bot'
+    @version = '0.01'
     @share_size = 4073741824
-    @email = 'takandar@gmail.com'
 
     @logged_in = false
-    @listener = true
+    @listener = nil
 
     @callbacks = {}
 
     add_callback(DCLockCommand, lambda {|command|
       # handshake
-      @hub.send_command(DCSupportsCommand.new('HubTopic'))
-      @hub.send_command(DCKeyCommand.new(command.key))
-      @hub.send_command(DCValidateNickCommand.new(@nickname))
+      send(DCSupportsCommand.new('HubTopic'))
+      send(DCKeyCommand.new(command.key))
+      send(DCValidateNickCommand.new(@nickname))
     })
     add_callback(DCHelloCommand, lambda {|command|
       # login
       return unless !logged_in? && command.data == @nickname
-      @hub.send_command(DCVersionCommand.new)
-      @hub.send_command(DCGetNickListCommand.new)
-      @hub.send_command(DCMyINFOCommand.new(@nickname, @bot_name, @bot_version, @share_size, @email))
+      send(DCVersionCommand.new)
+      send(DCGetNickListCommand.new)
+      send(DCMyINFOCommand.new(@nickname, @client, @version, @share_size, @email))
     })
     add_callback(DCValidateDenideCommand, lambda {|command|
       # shutdown
@@ -95,6 +94,11 @@ class RDCbot
 
   # send message to hub
   def say(message)
-    @hub.send_command(DCSayCommand.new(@nickname, message))
+    send(DCSayCommand.new(@nickname, message))
+  end
+
+  # sends command to hub
+  def send(command)
+    @hub.send_command(command)
   end
 end

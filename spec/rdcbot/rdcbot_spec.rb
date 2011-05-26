@@ -6,12 +6,14 @@ describe RDCbot do
       @hub = mock(DCHubConnection)
       DCHubConnection.stub(:new).and_return(@hub)
       @hub.stub(:connect)
+
+      @nickname = 'test'
     end
 
     #let(:connection) { DCConnection.new(nil, nil) }
 
     it "adds callback" do
-      bot = RDCbot.new("bot", "111", 111)
+      bot = RDCbot.new
       callbacks = bot.callbacks.include?(DCLockCommand) ? bot.callbacks[DCLockCommand].size : 0
       callback = lambda {|command| }
       bot.add_callback(DCLockCommand, callback)
@@ -19,21 +21,53 @@ describe RDCbot do
       bot.callbacks[DCLockCommand].last.should eq(callback)
     end
 
-    #it "connects to hub" do
-      #RDCbot.new("bot", "111", 111)
-      #RDCbot.
-      #socket = mock(TCPSocket)
-      #socket.stub(:recv).and_return(DCLockCommand.new("test").to_s)
-      #TCPSocket.stub(:new).and_return(socket)
-      #connection.stub(:socket).and_return(socket)
+    it "handshakes with hub" do
+      expecting_command = DCSupportsCommand
 
-      #connection.get_command.should eq DCLockCommand.new("test")
-    #end
+      hub = mock(DCHubConnection)
+      DCHubConnection.stub(:new).and_return(hub)
+      hub.stub(:connect)
 
+      bot = RDCbot.new
+      bot.nickname = @nickname
 
-    #it "returns one for test" do
-      #@bot.should_receive(:say).and_return("2")
-      #@bot.say
-    #end
+      hub.stub(:send_command).with do |v|
+        if v.class == expecting_command
+          case expecting_command.name
+            when DCSupportsCommand.name
+              expecting_command = DCKeyCommand
+
+            when DCKeyCommand.name
+              expecting_command = DCValidateNickCommand
+
+            when DCValidateNickCommand.name
+              expecting_command = DCVersionCommand
+
+            when DCVersionCommand.name
+              expecting_command = DCGetNickListCommand
+
+            when DCGetNickListCommand.name
+              expecting_command = DCMyINFOCommand
+
+            when DCMyINFOCommand.name
+              true
+
+            else
+              false
+          end
+        else
+          false
+        end
+      end.and_return do |v|
+        if v.class == DCValidateNickCommand
+          bot.fire(DCHelloCommand.new(@nickname))
+        end
+      end
+
+      Thread.stub(:new).and_return(true)
+
+      bot.start
+      bot.fire(DCLockCommand.new("key"))
+    end
   end
 end
