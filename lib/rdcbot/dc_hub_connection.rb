@@ -33,12 +33,12 @@ class DCHubConnection
       end
     end
     command = DCCommandBuilder.build(text)
-    puts "GOT:#{command.to_s}"
+    #puts "GOT:#{command.to_s}"
     @command_trigger_callback.call(command)
   end
 
   def send_command(command)
-    puts "SEND:#{command.to_s}"
+    #puts "SEND:#{command.to_s}"
     socket.write(command.to_s)
     socket.flush
   end
