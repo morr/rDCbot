@@ -9,15 +9,23 @@ hub_address = '10.8.13.88'
 hub_port    = 8888
 
 bot = RDCbot.new
+# setup bot parameters
 bot.nickname = 'rdcBot'
 bot.description = 'http://github.com'
 bot.host = hub_address
 bot.port = hub_port
 bot.email = 'github@gmail.com'
 
-bot.start
+# callback for chat message
+bot.add_callback(DCMessageCommand, lambda {|command|
+  puts "#{command.user}: #{command.text}"
+})
 
+# start bot
+bot.start
+# wait intil it connects to server
 sleep(1)
+# and say something in chat
 bot.say "test"
 while bot.alive?
   sleep(3)
