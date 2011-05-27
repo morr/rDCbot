@@ -1,0 +1,2 @@
+class DCQuitCommand < DCCommand
+end

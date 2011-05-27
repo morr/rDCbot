@@ -1,5 +1,3 @@
-require 'lib/dc_commands/dc_command'
-
 class DCKeyCommand < DCCommand
   def initialize(data)
     @data = generate_key(data)

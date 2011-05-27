@@ -1,5 +1,3 @@
-require 'lib/dc_commands/dc_command'
-
 class DCSayCommand < DCCommand
   def initialize(name, message)
     @name = name

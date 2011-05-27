@@ -1,5 +1,3 @@
-require 'lib/dc_commands/dc_command'
-
 class DCMyINFOCommand < DCCommand
   def initialize(*args)
     case args.size

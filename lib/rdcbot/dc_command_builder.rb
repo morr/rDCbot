@@ -1,7 +1,3 @@
-Dir.glob('lib/dc_commands/*') do |v|
-  require v
-end
-
 class DCCommandBuilder
   def self.build(*args)
     name, data = parse(*args)

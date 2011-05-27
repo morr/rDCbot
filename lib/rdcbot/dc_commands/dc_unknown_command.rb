@@ -1,5 +1,3 @@
-require 'lib/dc_commands/dc_command'
-
 class DCUnknownCommand < DCCommand
   def initialize(name, data)
     @name = name

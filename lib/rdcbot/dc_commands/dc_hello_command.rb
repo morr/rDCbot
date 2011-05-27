@@ -1,0 +1,2 @@
+class DCHelloCommand < DCCommand
+end
