@@ -1,2 +1,24 @@
-This is a bot for Direct Connect(DC) protocal written in ruby.
+This is a bot for the Direct Connect(DC++) protocol written in ruby.
 rDCbot was tested for ruby 1.8.7
+
+Usage:
+
+require 'lib/rdcbot'
+
+hub_address = '10.8.13.88'
+hub_port    = 8888
+
+bot = RDCbot.new
+bot.nickname = 'rdcBot'
+bot.description = 'http://github.com'
+bot.host = hub_address
+bot.port = hub_port
+bot.email = 'github@gmail.com'
+
+bot.start
+
+sleep(1)
+bot.say "test"
+while bot.alive?
+  sleep(3)
+end
