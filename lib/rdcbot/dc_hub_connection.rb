@@ -2,6 +2,7 @@ require 'socket'
 
 class DCHubConnection
   attr_reader :socket
+  attr_accessor :logger
 
   def initialize(host, port, command_trigger_callback)
     @host = host
@@ -33,12 +34,12 @@ class DCHubConnection
       end
     end
     command = DCCommandBuilder.build(text)
-    #puts "GOT:#{command.to_s}"
+    @logger.debug "GOT:#{command.to_s}" if @logger
     @command_trigger_callback.call(command)
   end
 
   def send_command(command)
-    #puts "SEND:#{command.to_s}"
+    @logger.debug "SEND:#{command.to_s}" if @logger
     socket.write(command.to_s)
     socket.flush
   end

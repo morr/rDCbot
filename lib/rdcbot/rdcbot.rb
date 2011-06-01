@@ -14,6 +14,8 @@ class RDCbot
 
   attr_accessor :reconnect_timeout
 
+  attr_accessor :logger
+
   # constructor
   def initialize
     @client = 'rubyDC++bot'
@@ -29,6 +31,8 @@ class RDCbot
 
     @callbacks = {}
 
+    add_callback(DCCommand, lambda {|command|
+    })
     add_callback(DCLockCommand, lambda {|command|
       # handshake
       send(DCSupportsCommand.new('HubTopic'))
@@ -111,6 +115,7 @@ class RDCbot
       @hub.disconnect
     end
     @hub = DCHubConnection.new(@host, @port, method(:fire))
+    @hub.logger = @logger if @logger
     @hub.connect
   end
 end
