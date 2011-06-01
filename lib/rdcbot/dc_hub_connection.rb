@@ -34,12 +34,12 @@ class DCHubConnection
       end
     end
     command = DCCommandBuilder.build(text)
-    @logger.debug "[#{Process.pid}] GOT:#{command.to_s}" if @logger
+    @logger.debug "GOT:#{command.to_s}" if @logger
     @command_trigger_callback.call(command)
   end
 
   def send_command(command)
-    @logger.debug "[#{Process.pid}] SEND:#{command.to_s}" if @logger
+    @logger.debug "SEND:#{command.to_s}" if @logger
     socket.write(command.to_s)
     socket.flush
   end
