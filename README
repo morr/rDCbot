@@ -5,6 +5,13 @@ Usage:
 
 require 'lib/rdcbot'
 
+# our simple logger
+class Logger
+  def debug(text)
+    puts text
+  end
+end
+
 hub_address = '10.8.13.88'
 hub_port    = 8888
 
@@ -21,8 +28,12 @@ bot.add_callback(DCMessageCommand, lambda {|command|
   puts "#{command.user}: #{command.text}"
 })
 
+# let's add logger
+bot.logger = Logger.new
+
 # start bot
 bot.start
+
 # wait intil it connects to server
 sleep(1)
 # and say something in chat
