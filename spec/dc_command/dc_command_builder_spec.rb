@@ -23,6 +23,9 @@ describe DCCommandBuilder do
   it "correctly builds Message command" do
     DCCommandBuilder.build("<bot> hello").
       should eq DCMessageCommand.new("bot", "hello")
+
+    DCCommandBuilder.build("<[батоно]Домокун> hello").
+      should eq DCMessageCommand.new("[батоно]Домокун", "hello")
   end
 
   it "correctly builds MyINFO command" do

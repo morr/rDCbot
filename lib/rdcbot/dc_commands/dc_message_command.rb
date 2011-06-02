@@ -3,7 +3,7 @@ class DCMessageCommand < DCCommand
   attr_accessor :text
 
   def initialize(user, data)
-    @user = user
+    @user = Iconv.iconv('utf-8', 'cp1251', user)
     @data = data
     @text = Iconv.iconv('utf-8', 'cp1251', data)
   end
