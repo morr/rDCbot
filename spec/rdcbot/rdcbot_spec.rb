@@ -1,6 +1,25 @@
 require 'spec_helper'
 
 describe RDCbot do
+  it "adds callback" do
+    bot = RDCbot.new
+    callbacks = bot.callbacks.include?(DCLockCommand) ? bot.callbacks[DCLockCommand].size : 0
+    callback = lambda {|command| }
+    bot.add_callback(DCLockCommand, callback)
+    bot.callbacks[DCLockCommand].size.should eq(callbacks+1)
+    bot.callbacks[DCLockCommand].last.should eq(callback)
+  end
+
+  it "fires all callbacks" do
+    bot = RDCbot.new
+    callbacks = bot.callbacks.include?(DCLockCommand) ? bot.callbacks[DCLockCommand].size : 0
+    callback = lambda {|command| }
+    callback.should_receive(:call).twice
+    bot.add_callback(DCMessageCommand, callback)
+    bot.add_callback(DCMessageCommand, callback)
+    bot.fire(DCMessageCommand.new("test", "test"))
+  end
+
   context "connecting to hub and handshaking" do
     before(:each) do
       @hub = mock(DCHubConnection)
@@ -11,15 +30,6 @@ describe RDCbot do
     end
 
     #let(:connection) { DCConnection.new(nil, nil) }
-
-    it "adds callback" do
-      bot = RDCbot.new
-      callbacks = bot.callbacks.include?(DCLockCommand) ? bot.callbacks[DCLockCommand].size : 0
-      callback = lambda {|command| }
-      bot.add_callback(DCLockCommand, callback)
-      bot.callbacks[DCLockCommand].size.should eq(callbacks+1)
-      bot.callbacks[DCLockCommand].last.should eq(callback)
-    end
 
     it "handshakes with hub" do
       expecting_command = DCSupportsCommand
