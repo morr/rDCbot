@@ -31,8 +31,6 @@ class RDCbot
 
     @callbacks = {}
 
-    add_callback(DCCommand, lambda {|command|
-    })
     add_callback(DCLockCommand, lambda {|command|
       # handshake
       send(DCSupportsCommand.new('HubTopic'))
@@ -98,7 +96,7 @@ class RDCbot
     end
   end
 
-  # send message to hub
+  # say something to hub
   def say(message)
     send(DCSayCommand.new(@nickname, message))
   end
