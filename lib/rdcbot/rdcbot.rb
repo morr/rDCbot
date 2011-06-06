@@ -12,7 +12,11 @@ class RDCbot
 
   attr_accessor :callbacks
 
+  # sleep time before reconnect call
   attr_accessor :reconnect_timeout
+
+  # maximum interval before reconnect call
+  attr_accessor :keepalive_timeout
 
   attr_accessor :logger
 
@@ -28,6 +32,7 @@ class RDCbot
     @hub = nil
 
     @reconnect_timeout = 2
+    @keepalive_timeout = 200
 
     @callbacks = {}
 
@@ -45,9 +50,7 @@ class RDCbot
       send(DCMyINFOCommand.new(@nickname, @description, @client, @version, @share_size, @email))
     })
     add_callback(DCValidateDenideCommand, lambda {|command|
-      # reconnect in 5 seconds
-      sleep(@reconnect_timeout)
-      connect
+      reconnect
     })
     add_callback(DCNickListCommand, lambda {|command|
       # final login step
@@ -64,15 +67,23 @@ class RDCbot
   # sepate thread for DCHub listening
   def start
     connect
+    @last_alive = Time.now
     @listener = Thread.new do
       while true
         begin
-          @hub.fetch_command
+          @last_alive = Time.now if @hub.fetch_command
+
+          if Time.now > @last_alive + @keepalive_timeout
+            @logger.error "connection lost" if @logger
+            @last_alive = Time.now
+            reconnect
+          end
 
         rescue Exception => e
           exit if e.class == Interrupt
           puts e.message
           puts e.backtrace.join("\n")
+          break
         end
       end
     end
@@ -106,9 +117,15 @@ class RDCbot
     @hub.send_command(command)
   end
 
+  def reconnect
+    sleep(@reconnect_timeout)
+    connect
+  end
+
   private
   # init DCHubConnection
   def connect
+    @logger.info "connecting to hub %s:%d" % [@host, @port] if @logger
     if @hub
       @hub.disconnect
     end

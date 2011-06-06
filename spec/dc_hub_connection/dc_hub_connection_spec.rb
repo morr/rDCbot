@@ -26,6 +26,7 @@ describe DCHubConnection do
 
       connection = DCHubConnection.new(nil, nil, callback)
       connection.stub(:socket).and_return(socket)
+      IO.stub(:select).and_return([[socket], nil , nil])
 
       connection.fetch_command
     end
